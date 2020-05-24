@@ -21,19 +21,19 @@ type Articles []Article
 
 func allArticles(w http.ResponseWriter, r*http.Request) {
 	articles := Articles {
-		Article{ Title: "test", Desc: "descirpitop"},
+		Article{ Title: "test", Desc: "product description"},
 	}
 
-	fmt.Println("Endpoinmt hit: all articles endpoint");
+	fmt.Println("Endpoint hit: all articles endpoint");
 	json.NewEncoder(w).Encode(articles);
 }
 
 func postArticles(w http.ResponseWriter, r*http.Request) {
 	articles := Articles {
-		Article{ Title: "test", Desc: "descirpitop"},
+		Article{ Title: "test", Desc: "product description"},
 	}
 
-	fmt.Println("Endpoinmt hit: post article endpoint");
+	fmt.Println("Endpoint hit: post article endpoint");
 	json.NewEncoder(w).Encode(articles);
 }
 
