@@ -1,52 +1,25 @@
 package main;
 
 import (
-	"fmt"
-	"log"
 	"net/http"
-	"encoding/json"
-	"github.com/gorilla/mux"
+
+	"github.com/graphql-go/handler"
+	"github.com/graphql-go/relay/examples/starwars"
 )
 
-func homePage(w http.ResponseWriter, r *http.Request){
-	fmt.Fprint(w, "HOMEPAGE Endpoint hit");
-}
+func main() {
 
-type Article struct{
-	Title string `json:"title"`
-	Desc string `json:"desc"`
-}
+	// simplest relay-compliant graphql server HTTP handler
+	// using Starwars schema from `graphql-relay-go` examples
+	h := handler.New(&handler.Config{
+		Schema: &starwars.Schema,
+		Pretty: true,
+	})
 
-type Articles []Article 
+	// static file server to serve Graphiql in-browser editor
+	fs := http.FileServer(http.Dir("static"))
 
-func allArticles(w http.ResponseWriter, r*http.Request) {
-	articles := Articles {
-		Article{ Title: "test", Desc: "product description"},
-	}
-
-	fmt.Println("Endpoint hit: all articles endpoint");
-	json.NewEncoder(w).Encode(articles);
-}
-
-func postArticles(w http.ResponseWriter, r*http.Request) {
-	articles := Articles {
-		Article{ Title: "test", Desc: "product description"},
-	}
-
-	fmt.Println("Endpoint hit: post article endpoint");
-	json.NewEncoder(w).Encode(articles);
-}
-
-func handleRequests(){
-
-	myRouter := mux.NewRouter().StrictSlash(true);
-
-	myRouter.HandleFunc("/", homePage);
-	myRouter.HandleFunc("/articles", allArticles).Methods("GET")
-	myRouter.HandleFunc("/articles", postArticles).Methods("POST")
-	log.Fatal(http.ListenAndServe(":8080", myRouter))
-}
-
-func main(){
-	handleRequests();
+	http.Handle("/graphql", h)
+	http.Handle("/", fs)
+	http.ListenAndServe(":8081", nil)
 }
